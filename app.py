@@ -6,6 +6,7 @@ one workflow (stuck-invoice list -> case summary -> ready reminder -> follow-up 
 """
 
 import json
+import time
 from datetime import date, timedelta
 
 import pandas as pd
@@ -127,17 +128,24 @@ def escalation_needed(prev_follow_ups: int, days_to_due: int, critical: bool = F
 
 def call_gemini(prompt: str) -> dict:
     from google import genai
-    from google.genai import types
+    from google.genai import errors, types
 
     client = genai.Client(api_key=st.secrets["GEMINI_API_KEY"])
-    resp = client.models.generate_content(
-        model=MODEL,
-        contents=prompt,
-        config=types.GenerateContentConfig(
-            temperature=0.2, response_mime_type="application/json"
-        ),
+    config = types.GenerateContentConfig(
+        temperature=0.2, response_mime_type="application/json"
     )
-    return json.loads(resp.text)
+    for attempt in range(3):
+        try:
+            resp = client.models.generate_content(model=MODEL, contents=prompt, config=config)
+            return json.loads(resp.text)
+        except errors.ServerError as exc:
+            if exc.code != 503:
+                raise
+            if attempt == 2:
+                raise RuntimeError(
+                    "Gemini is still busy. Wait a minute, then click Build case summary again."
+                ) from exc
+            time.sleep(2 ** (attempt + 1))
 
 
 # ------------------------------------------------------------------------ UI
