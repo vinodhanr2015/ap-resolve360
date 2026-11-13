@@ -1,0 +1,4 @@
+29-Oct AP -> Stores: Invoice INV-1023 for 100 units of Bearing 6205 against PO-4501 received. No GRN in ERP. Please confirm receipt.
+03-Nov AP -> Stores: Reminder - INV-1023 still on hold, no GRN.
+06-Nov Stores -> AP: Material came last week, will check.
+10-Nov AP -> Stores (Teams): Payment due 16-Nov. Please confirm quantity received and post GRN.
