@@ -13,7 +13,7 @@ import streamlit as st
 
 st.set_page_config(page_title="AP Resolve360", page_icon="📋", layout="wide")
 
-MODEL = "gemini-2.5-flash"
+MODEL = "gemini-3.8-flash"
 TODAY = date.today()
 
 CATEGORIES = [
